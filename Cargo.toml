@@ -1,0 +1,8 @@
+[package]
+name = "sigmaos-arch-repro-status"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Reproducibility status dashboard backend — SigmaOS component inspired by Arch Linux infrastructure."
+
+[dependencies]
