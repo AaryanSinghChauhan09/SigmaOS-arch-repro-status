@@ -1,8 +1,15 @@
 [package]
-name = "sigmaos-arch-repro-status"
+name = "SigmaOS-arch-repro-status"
 version = "0.1.0"
 edition = "2021"
-license = "MIT"
-description = "Reproducibility status dashboard backend — SigmaOS component inspired by Arch Linux infrastructure."
+license = "Apache-2.0"
+description = "SigmaOS arch_repro_status component"
+
+[lib]
+name = "arch_repro_status"
+path = "src/lib.rs"
 
 [dependencies]
+thiserror = "1"
+
+[dev-dependencies]

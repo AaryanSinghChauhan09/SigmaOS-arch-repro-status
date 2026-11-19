@@ -1,79 +1,54 @@
-//! Reproducibility status dashboard backend
-//!
-//! SigmaOS component inspired by Arch Linux's `arch-repro-status` repository.
-//! Designed for component isolation, loose coupling, and secure defaults.
+//! SigmaOS arch_repro_status component
+#![forbid(unsafe_code)]
+#![warn(missing_docs)]
 
-use std::fmt;
+use thiserror::Error;
 
-/// Errors produced by this component. Fail-fast: errors are returned, not panicked.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum ArchReproStatusError {
-    /// The requested operation is not valid in the current state.
-    InvalidState,
-    /// Input failed validation.
-    InvalidInput(String),
+/// Error types for this component.
+#[derive(Debug, Error)]
+pub enum ComponentError {
+    /// Not initialised.
+    #[error("component not initialised")]
+    NotInitialised,
+    /// Unsupported operation.
+    #[error("unsupported: {0}")]
+    Unsupported(&'static str),
 }
 
-impl fmt::Display for ArchReproStatusError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::InvalidState => write!(f, "invalid state"),
-            Self::InvalidInput(msg) => write!(f, "invalid input: {msg}"),
-        }
+/// Result alias.
+pub type ComponentResult<T> = Result<T, ComponentError>;
+
+/// Component handle.
+#[derive(Debug, Default, Clone)]
+pub struct Component { initialised: bool }
+
+impl Component {
+    /// Create uninitialised component.
+    pub fn new() -> Self { Self::default() }
+    /// Initialise.
+    pub fn init(&mut self) -> ComponentResult<()> { self.initialised = true; Ok(()) }
+    /// Is ready?
+    pub fn is_ready(&self) -> bool { self.initialised }
+    /// Run.
+    pub fn run(&self) -> ComponentResult<()> {
+        if !self.initialised { return Err(ComponentError::NotInitialised); }
+        Ok(())
     }
-}
-
-impl std::error::Error for ArchReproStatusError {}
-
-/// Core component type. Holds configuration; performs no I/O by default.
-#[derive(Debug, Clone, Default)]
-pub struct ArchReproStatus {
-    name: String,
-}
-
-impl ArchReproStatus {
-    /// Create a new component instance. Fails fast on empty names.
-    pub fn new(name: impl Into<String>) -> Result<Self, ArchReproStatusError> {
-        let name = name.into();
-        if name.trim().is_empty() {
-            return Err(ArchReproStatusError::InvalidInput("name must not be empty".into()));
-        }
-        Ok(Self { name })
-    }
-
-    /// Component identifier.
-    pub fn name(&self) -> &str {
-        &self.name
-    }
-
-    /// Perform the component's primary action. Returns a deterministic result.
-    pub fn run(&self) -> Result<String, ArchReproStatusError> {
-        if self.name.is_empty() {
-            return Err(ArchReproStatusError::InvalidState);
-        }
-        Ok(format!("{}: ok", self.name))
-    }
+    /// Reset.
+    pub fn reset(&mut self) { self.initialised = false; }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
-    fn new_rejects_empty_name() {
-        // Arrange / Act / Assert
-        assert!(matches!(ArchReproStatus::new("  "), Err(ArchReproStatusError::InvalidInput(_))));
-    }
-
+    fn test_new_not_ready() { assert!(!Component::new().is_ready()); }
     #[test]
-    fn run_returns_deterministic_result() {
-        let c = ArchReproStatus::new("test").unwrap();
-        assert_eq!(c.run().unwrap(), "test: ok");
-    }
-
+    fn test_init_ok() { let mut c = Component::new(); c.init().unwrap(); assert!(c.is_ready()); }
     #[test]
-    fn name_is_accessible() {
-        let c = ArchReproStatus::new("abc").unwrap();
-        assert_eq!(c.name(), "abc");
-    }
+    fn test_run_before_init_err() { assert!(Component::new().run().is_err()); }
+    #[test]
+    fn test_run_after_init_ok() { let mut c = Component::new(); c.init().unwrap(); assert!(c.run().is_ok()); }
+    #[test]
+    fn test_reset() { let mut c = Component::new(); c.init().unwrap(); c.reset(); assert!(!c.is_ready()); }
 }
