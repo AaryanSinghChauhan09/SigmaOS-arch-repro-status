@@ -1,4 +1,4 @@
-use arch_repro_status::Component;
+use sigmaos_repro_status::Component;
 
 #[test]
 fn test_component_lifecycle_aaa() {

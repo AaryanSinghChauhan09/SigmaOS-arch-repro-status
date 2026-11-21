@@ -1,4 +1,4 @@
-//! SigmaOS arch_repro_status component
+//! SigmaOS repro_status component
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
 

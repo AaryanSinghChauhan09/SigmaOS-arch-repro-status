@@ -1,6 +1,6 @@
-# SigmaOS-arch-repro-status
+# SigmaOS-repro-status
 
-SigmaOS arch-repro-status component (Arch Linux inspired)
+SigmaOS repro-status component (Arch Linux inspired)
 
 - **Category:** Messaging
 - **Engine:** messaging

@@ -1,12 +1,12 @@
 [package]
-name = "SigmaOS-arch-repro-status"
+name = "sigmaos-repro-status"
 version = "0.1.0"
 edition = "2021"
 license = "Apache-2.0"
-description = "SigmaOS arch_repro_status component"
+description = "SigmaOS sigmaos_repro_status component"
 
 [lib]
-name = "arch_repro_status"
+name = "sigmaos_repro_status"
 path = "src/lib.rs"
 
 [dependencies]

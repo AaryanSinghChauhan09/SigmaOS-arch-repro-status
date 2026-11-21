@@ -1,9 +1,9 @@
 [component]
-name = "SigmaOS-arch-repro-status"
+name = "SigmaOS-repro-status"
 tier = 2
 stability = "scaffold"
 language = "rust"
-description = "SigmaOS arch-repro-status component (Arch Linux inspired)"
+description = "SigmaOS repro-status component (Arch Linux inspired)"
 upstream = []
 
 [contract]
